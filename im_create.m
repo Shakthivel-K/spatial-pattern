@@ -7,26 +7,35 @@ yright=10; ny=floor(nx*yright/xright);
 h=xright/nx;
 x=linspace(-0.5*h,xright+0.5*h,nx+2)';
 y=linspace(-0.5*h,yright+0.5*h,ny+2);
-
+alphaa=1.0;
+betaa=1.0;
 % set the parameters which govern equation
-Du=1;       %diffusion coefficients
-Dv=0.01;    %diffusion coefficients
+Du1=1;       %diffusion coefficients
+Dv1=0.01;
+Du2=1;
+Dv2=0.01;
+%diffusion coefficients
 k1=11;      %same as parameters a
 k2=11;      %same as parrameters b
-ubar=1+0.04*k2^2;
-vbar=0.2*k2;
+u1bar=1+0.04*k2^2;
+v1bar=0.2*k2;
+u2bar=1+0.04*k2^2;
+v2bar=0.2*k2;
 
 % set the parameters (time discretization)
 dt=0.1*h^2;
 maxit=80000;
 nn=maxit;
 
-for pit=1:50    % the number of images
+for pit=1:8    % the number of images
 % set the initial condition
 rng(pit);
-u=ubar+0.1*(2*rand(nx+2,ny+2)-1);
-v=vbar+0.1*(2*rand(nx+2,ny+2)-1);
-nu=u; nv=v;
+u1=u1bar+0.1*(2*rand(nx+2,ny+2)-1);
+v1=v1bar+0.1*(2*rand(nx+2,ny+2)-1);
+u2=u2bar+0.1*(2*rand(nx+2,ny+2)-1);
+v2=v2bar+0.1*(2*rand(nx+2,ny+2)-1);
+nu1=u1; nv1=v1;
+nu2=u2; nv2=v2;
 
 % nx=5;
 % u1=u0+0.1*(2*rand(nx+2)-1);
@@ -36,14 +45,22 @@ nu=u; nv=v;
 % numerical scheme
     for it=1:maxit
     % periodic boundary condition
-        u(2:end-1,1)=u(2:end-1,end-1);
-        u(2:end-1,end)=u(2:end-1,2);
-        u(1,:)=u(end-1,:);
-        u(end,:)=u(2,:);
-        v(2:end-1,1)=v(2:end-1,end-1);
-        v(2:end-1,end)=v(2:end-1,2);
-        v(1,:)=v(end-1,:);
-        v(end,:)=v(2,:);
+        u1(2:end-1,1)=u1(2:end-1,end-1);
+        u1(2:end-1,end)=u1(2:end-1,2);
+        u1(1,:)=u1(end-1,:);
+        u1(end,:)=u1(2,:);
+        v1(2:end-1,1)=v1(2:end-1,end-1);
+        v1(2:end-1,end)=v1(2:end-1,2);
+        v1(1,:)=v1(end-1,:);
+        v1(end,:)=v1(2,:);
+        u2(2:end-1,1)=u2(2:end-1,end-1);
+        u2(2:end-1,end)=u2(2:end-1,2);
+        u2(1,:)=u2(end-1,:);
+        u2(end,:)=u2(2,:);
+        v2(2:end-1,1)=v2(2:end-1,end-1);
+        v2(2:end-1,end)=v2(2:end-1,2);
+        v2(1,:)=v2(end-1,:);
+        v2(end,:)=v2(2,:);
     
     % utilda=@(t,x) ustar*exp(sig*t)*sin(alpha*x);% Substitute in dzhi_udt=d1*lap(zhi_u)+fu*zhi_u+fv*zhi_v;      at (u0,v0)
     % vtilda=@(t,x) vstar*exp(sig*t)*sin(alpha*x);%               dzhi_vdt=sigma*d2*lap(zhi_v)+gu*zhi_u+gv*zhi_v;
@@ -51,29 +68,37 @@ nu=u; nv=v;
     % diffv=sigma*(d2*laplacian(v1,[t x]))%,h)));
     
     % set the source terms
-        F=u(2:end-1,2:end-1).*v(2:end-1,2:end-1) ...
-            ./(1+v(2:end-1,2:end-1).^2);
-        f=k1*(v(2:end-1,2:end-1)-F);
-        g=k2-v(2:end-1,2:end-1)-4*F;
-
+        F1=u1(2:end-1,2:end-1).*v1(2:end-1,2:end-1)...
+        ./(1+v1(2:end-1,2:end-1).^2);
+        F2=u2(2:end-1,2:end-1).*v2(2:end-1,2:end-1)...
+        ./(1+v2(2:end-1,2:end-1).^2);
+        f1=k1*(v1(2:end-1,2:end-1)-F1)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1));
+        g1=k2-v1(2:end-1,2:end-1)-4*F1+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1));
+        f2=k1*(v2(2:end-1,2:end-1)-F2)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1));
+        g2=k2-v2(2:end-1,2:end-1)-4*F2+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1));
     % solve the equations
-        nu(2:end-1,2:end-1)=u(2:end-1,2:end-1)+dt*(f+Du*lap(u,h));
-        nv(2:end-1,2:end-1)=v(2:end-1,2:end-1)+dt*(g+Dv*lap(v,h));
+        nu1(2:end-1,2:end-1)=u1(2:end-1,2:end-1)+dt*(f1+Du1*lap(u1,h));
+        nv1(2:end-1,2:end-1)=v1(2:end-1,2:end-1)+dt*(g1+Dv1*lap(v1,h));
+        nu2(2:end-1,2:end-1)=u2(2:end-1,2:end-1)+dt*(f2+Du2*lap(u2,h));
+        nv2(2:end-1,2:end-1)=v2(2:end-1,2:end-1)+dt*(g2+Dv2*lap(v2,h));
     
     % solve the equations
     % zhiu(2:end-1,2:end-1)=u1(2:end-1,2:end-1)+dt*(diffu+(A0(1,1).*u1(2:end-1,2:end-1))+(A0(1,2).*v1(2:end-1,2:end-1)));
     % zhiv(2:end-1,2:end-1)=v1(2:end-1,2:end-1)+dt*(diffv+(A0(2,1).*u1(2:end-1,2:end-1))+(A0(2,2).*v1(2:end-1,2:end-1)));
     
     % reset the variables for next step
-        u=nu;
-        v=nv;
+        u1=nu1;
+        v1=nv1;
+        u2=nu2;
+        v2=nv2;
     
     % visualization
         figure(pit);
         
         %print('-djpeg',sprintf('0/pattern_%d',pit));    % storage path
     end
-    surf(x(2:end-1),y(2:end-1),u(2:end-1,2:end-1)','linestyle','none');
+    % % display content
+    surf(x(2:end-1),y(2:end-1),u1(2:end-1,2:end-1)','linestyle','none');
     axis image;
     view(2);
     set(gca, 'xtick',[], 'ytick',[]);
@@ -82,3 +107,6 @@ nu=u; nv=v;
     drawnow;
     
 end
+
+
+
