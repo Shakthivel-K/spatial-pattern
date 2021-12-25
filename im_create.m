@@ -75,10 +75,10 @@ nu2=u2; nv2=v2;
         ./(1+v1(2:end-1,2:end-1).^2);
         F2=u2(2:end-1,2:end-1).*v2(2:end-1,2:end-1)...
         ./(1+v2(2:end-1,2:end-1).^2);
-        f1=k1*(v1(2:end-1,2:end-1)-F1)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1));
-        g1=k2-v1(2:end-1,2:end-1)-4*F1+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1));
-        f2=k1*(v2(2:end-1,2:end-1)-F2)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1));
-        g2=k2-v2(2:end-1,2:end-1)-4*F2+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1));
+        f1=k1*(v1(2:end-1,2:end-1)-F1)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1)-w);
+        g1=k2-v1(2:end-1,2:end-1)-4*F1+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1)+9.*w);
+        f2=k1*(v2(2:end-1,2:end-1)-F2)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1)-w);
+        g2=k2-v2(2:end-1,2:end-1)-4*F2+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1)+9.*w);
     % solve the equations
         nu1(2:end-1,2:end-1)=u1(2:end-1,2:end-1)+dt*(f1+Du1*lap(u1,h));
         nv1(2:end-1,2:end-1)=v1(2:end-1,2:end-1)+dt*(g1+Dv1*lap(v1,h));
