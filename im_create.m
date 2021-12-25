@@ -2,29 +2,29 @@
 clear all; clc; close all;
 
 % spatial discretization
-xright=10; nx=50;
+xright=10; nx=10;
 yright=10; ny=floor(nx*yright/xright); 
 h=xright/nx;
 x=linspace(-0.5*h,xright+0.5*h,nx+2)';
 y=linspace(-0.5*h,yright+0.5*h,ny+2);
-alphaa=0.5;
-betaa=0.5;
+alphaa=0.1;
+betaa=0.1;
 % alphaa=0.5; changing to these values coverts to labrinth
 % betaa=0.5;
-w=1.9175;
+w=2.45;
 % set the parameters which govern equation
-Du1=1.55;       %diffusion coefficients
-Dv1=0.01;
-Du2=1.66;
-Dv2=0.02;
+Du2=1.404;       %diffusion coefficients
+Dv2=2.088;
+Du1=10.719;
+Dv1=22.796;
 %diffusion coefficients
-k1=11;      %same as parameters a
-k2=11;      %same as parrameters b
+k1=1.5;      %same as parameters a
+k2=18;      %same as parrameters b
 u1bar=1+0.04*k2^2;
 v1bar=0.2*k2;
 u2bar=1+0.04*k2^2;
 v2bar=0.2*k2;
-
+sigma=9.0;
 % set the parameters (time discretization)
 dt=0.1*h^2;
 maxit=10000;
@@ -75,10 +75,10 @@ nu2=u2; nv2=v2;
         ./(1+v1(2:end-1,2:end-1).^2);
         F2=u2(2:end-1,2:end-1).*v2(2:end-1,2:end-1)...
         ./(1+v2(2:end-1,2:end-1).^2);
-        f1=k1*(v1(2:end-1,2:end-1)-F1)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1)-w);
-        g1=k2-v1(2:end-1,2:end-1)-4*F1+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1)+9.*w);
-        f2=k1*(v2(2:end-1,2:end-1)-F2)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1)-w);
-        g2=k2-v2(2:end-1,2:end-1)-4*F2+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1)+9.*w);
+        f1=k1*(v1(2:end-1,2:end-1)-F1)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1))-w;
+        g1=k2-v1(2:end-1,2:end-1)-4*F1+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1))+sigma.*w;
+        f2=k1*(v2(2:end-1,2:end-1)-F2)+alphaa.*(u2(2:end-1,2:end-1)-u1(2:end-1,2:end-1))-w;
+        g2=k2-v2(2:end-1,2:end-1)-4*F2+betaa.*(v2(2:end-1,2:end-1)-v1(2:end-1,2:end-1))+sigma.*w;
     % solve the equations
         nu1(2:end-1,2:end-1)=u1(2:end-1,2:end-1)+dt*(f1+Du1*lap(u1,h));
         nv1(2:end-1,2:end-1)=v1(2:end-1,2:end-1)+dt*(g1+Dv1*lap(v1,h));
