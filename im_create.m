@@ -27,10 +27,10 @@ v2bar=0.2*k2;
 sigma=9.0;
 % set the parameters (time discretization)
 dt=0.1*h^2;
-maxit=2;
+maxit=9;
 nn=maxit;
 
-for pit=1:8    % the number of images
+for pit=1:2    % the number of images
 % set the initial condition
 rng(pit);
 u1=u1bar+0.1*(2*rand(nx+2,ny+2)-1);
@@ -96,7 +96,15 @@ nu2=u2; nv2=v2;
         v2=nv2;
     
     % visualization
+        nexttile
         figure(pit);
+        surf(x(2:end-1),y(2:end-1),u1(2:end-1,2:end-1)','linestyle','none');
+        axis image;
+        view(2);
+        set(gca, 'xtick',[], 'ytick',[]);
+        box on;
+        shading interp;
+        drawnow;
         
         %print('-djpeg',sprintf('0/pattern_%d',pit));    % storage path
     end
