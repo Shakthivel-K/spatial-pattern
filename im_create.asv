@@ -7,16 +7,14 @@ yright=10; ny=floor(nx*yright/xright);
 h=xright/nx;
 x=linspace(-0.5*h,xright+0.5*h,nx+2)';
 y=linspace(-0.5*h,yright+0.5*h,ny+2);
-alphaa=0.5;
-betaa=0.5;
-% alphaa=0.5; changing to these values coverts to labrinth
-% betaa=0.5;
+alphaa=1.0;
+betaa=1.0;
 w=1.9175;
 % set the parameters which govern equation
 Du1=1.55;       %diffusion coefficients
 Dv1=0.01;
 Du2=1.66;
-Dv2=0.02;
+Dv2=;
 %diffusion coefficients
 k1=11;      %same as parameters a
 k2=11;      %same as parrameters b
